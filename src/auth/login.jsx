@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import config from './config';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -30,7 +31,7 @@ const Login = () => {
     try {
       setError('');
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/login',
+        'http://127.0.0.1:8080/api/login',
         { email, password },
       );
       const token = response.data.token;
