@@ -1,54 +1,68 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import config from './config';
+import config from '../config';
 
-const Login = () => {
+const Register = () => {
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState({});
+  const [isRegistered, setIsRegistered] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    setError({});
 
-    // Validate Email and Password
-    if (!email) {
-      setEmailError('Please enter your email.');
+    let validationErrors = {};
+
+    // Validation for 'username'
+    if (!username.trim()) {
+      validationErrors.username = ['Username is required'];
+    }
+
+    // Validation for 'email'
+    if (!email.trim()) {
+      validationErrors.email = ['Email is required'];
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      validationErrors.email = ['Invalid email format'];
+    }
+
+    // Validation for 'password'
+    if (!password.trim()) {
+      validationErrors.password = ['Password is required'];
+    } else if (password.length < 6) {
+      validationErrors.password = ['Password must be at least 6 characters long'];
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setError(validationErrors);
       return;
     }
-    setEmailError('');
-
-    if (!password) {
-      setPasswordError('Please enter your password.');
-      return;
-    }
-    setPasswordError('');
 
     try {
-      setError('');
-      const response = await axios.post(
-        `${config.API_URL}/api/login`,
-        { email, password },
-      );
-      const token = response.data.token;
-      const username = response.data.username;
-      const roleid = response.data.roleid;
-      const userid = response.data.userid;
-    
-      localStorage.setItem('username', username);
-      localStorage.setItem('roleid', roleid);
-      localStorage.setItem('userid', userid);
+      const response = await axios.post(`${config.API_URL}/api/register`, {
+        username,
+        email,
+        password,
+      });
 
-      Cookies.set('jwt_token', token, { expires: 1 });
-    
-      window.location.reload();
+      console.log('User registered:', response.data.success);
+      setIsRegistered(true);
+      navigate('/success');
     } catch (error) {
-      setError('Invalid credentials. Please try again.');
+      if (error.response && error.response.data && error.response.data.error) {
+        setError(error.response.data.error);
+      } else {
+        console.error('An error occurred during registration:', error);
+      }
     }
   };
+
+  if (isRegistered) {
+    return <Link to="/success" />;
+  }
 
   return (
     <>
@@ -97,7 +111,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
               />
-              {error.password && <div className="text-red-500 mt-1">{errors.password[0]}</div>}
+              {error.password && <div className="text-red-500 mt-1">{error.password[0]}</div>}
               <button
                 type="submit"
                 className="w-full bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700 focus:outline-none focus:bg-indigo-700 mt-4"

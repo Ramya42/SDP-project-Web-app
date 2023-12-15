@@ -4,16 +4,31 @@ import Navbar from './pages/navbar/homenav';
 import Home from './pages/home';
 import Test from './pages/test';
 import PagenotFound from './pages/error/pagenotfound';
-import Login from './pages/login';
-import Register from './pages/register';
+import Login from './auth/login';
+import Register from './auth/register';
 
 function AppRoutes() {
+  const [isLogging, setIsLogging] = useState(true);
 
-  [isLoggin, setIsLoggin] = useState('False');
+  // useEffect(() => {
+  //   const checkTokenValidity = async () => {
+  //     try {
+  //       // API call to check JWT token 
+  //       const response = await YOUR_API_CHECK_METHOD();
 
+  //       if (response.jwtToken === true) {
+  //         setIsLogging(true);
+  //       } else {
+  //         setIsLogging(false);
+  //       }
+  //     } catch (error) {
+  //       setIsLogging(false);
+  //       console.error('Error checking token validity:', error);
+  //     }
+  //   };
 
-
-  const isLogging = true;
+  //   checkTokenValidity();
+  // }, []);
 
   return (
     <Router>
