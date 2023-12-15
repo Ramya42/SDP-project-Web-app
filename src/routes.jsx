@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
 import Test from './pages/test';
-import PagenotFound from './'
+import PagenotFound from './pages/error/pagenotfound';
 
 function AppRoutes() {
   return (
