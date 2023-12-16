@@ -6,29 +6,36 @@ import Test from './pages/test';
 import PagenotFound from './pages/error/pagenotfound';
 import Login from './auth/login';
 import Register from './auth/register';
+import SearchResults from './pages/searchResults';
+import AboutUs from './pages/aboutUs';
+import Profile from './pages/profile';
+import ContactUs from './pages/contactUs';
+import Institutions from './pages/institutions';
+import config from './config';
 
 function AppRoutes() {
   const [isLogging, setIsLogging] = useState(true);
 
-  // useEffect(() => {
-  //   const checkTokenValidity = async () => {
-  //     try {
-  //       // API call to check JWT token 
-  //       const response = await YOUR_API_CHECK_METHOD();
+  useEffect(() => {
+    const checkTokenValidity = async () => {
+      try {
+        const response = await fetch(`${config.API_BASE_URL}/check-token`);
+        const data = await response.json();
 
-  //       if (response.jwtToken === true) {
-  //         setIsLogging(true);
-  //       } else {
-  //         setIsLogging(false);
-  //       }
-  //     } catch (error) {
-  //       setIsLogging(false);
-  //       console.error('Error checking token validity:', error);
-  //     }
-  //   };
+        if (data.jwtToken === true) {
+          setIsLogging(true);
+        } else {
+          setIsLogging(false);
+        }
+      } catch (error) {
+        // setIsLogging(false);
+        setIsLogging(true); // only for testing without backend
+        console.error('Error checking token validity:', error);
+      }
+    };
 
-  //   checkTokenValidity();
-  // }, []);
+    checkTokenValidity();
+  }, []);
 
   return (
     <Router>
@@ -37,6 +44,11 @@ function AppRoutes() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/institutions" element={<Institutions />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/search-result" element={<SearchResults />} />
             <Route path="/test" element={<Test />} />
             <Route path="*" element={<PagenotFound />} />
           </Routes>
